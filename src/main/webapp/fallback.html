@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App - Resource Loading Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        
+        .check-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .unknown {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat App Resource Loading Check</h1>
+        
+        <div class="check-item unknown" id="css-check">
+            <h2>CSS Loading</h2>
+            <p>Checking if the CSS file can be loaded...</p>
+            <div id="css-result"></div>
+        </div>
+        
+        <div class="check-item unknown" id="js-check">
+            <h2>JavaScript Loading</h2>
+            <p>Checking if the JavaScript file can be loaded...</p>
+            <div id="js-result"></div>
+        </div>
+        
+        <div class="check-item">
+            <h2>Resource Paths</h2>
+            <p>Check the paths to the resources:</p>
+            <pre id="path-info">
+Current URL: <script>document.write(window.location.href)</script>
+Context Path: <script>document.write(window.location.pathname.split('/')[1])</script>
+            </pre>
+        </div>
+        
+        <div class="check-item">
+            <h2>Actions</h2>
+            <p>Try the following actions:</p>
+            <div>
+                <button onclick="testCSS()">Test CSS Loading</button>
+                <button onclick="testJS()">Test JavaScript Loading</button>
+                <button onclick="clearCache()">Clear Cache</button>
+                <button onclick="window.location.href='login.jsp'">Go to Login</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function testCSS() {
+            var cssCheck = document.getElementById('css-check');
+            var cssResult = document.getElementById('css-result');
+            
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'css/style.css';
+            link.onload = function() {
+                cssCheck.className = 'check-item success';
+                cssResult.innerHTML = 'CSS file loaded successfully! Path: ' + link.href;
+            };
+            link.onerror = function() {
+                cssCheck.className = 'check-item error';
+                cssResult.innerHTML = 'Failed to load CSS file. Path: ' + link.href;
+            };
+            document.head.appendChild(link);
+        }
+        
+        function testJS() {
+            var jsCheck = document.getElementById('js-check');
+            var jsResult = document.getElementById('js-result');
+            
+            var script = document.createElement('script');
+            script.src = 'js/chat.js';
+            script.onload = function() {
+                jsCheck.className = 'check-item success';
+                jsResult.innerHTML = 'JavaScript file loaded successfully! Path: ' + script.src;
+            };
+            script.onerror = function() {
+                jsCheck.className = 'check-item error';
+                jsResult.innerHTML = 'Failed to load JavaScript file. Path: ' + script.src;
+            };
+            document.head.appendChild(script);
+        }
+        
+        function clearCache() {
+            // Add a timestamp to force cache refresh
+            var timestamp = new Date().getTime();
+            var pathInfo = document.getElementById('path-info');
+            pathInfo.innerHTML += '\nAdding timestamp to force cache refresh: ' + timestamp;
+            
+            window.location.href = window.location.href.split('?')[0] + '?t=' + timestamp;
+        }
+        
+        // Run the tests on page load
+        window.onload = function() {
+            testCSS();
+            setTimeout(testJS, 500);
+        };
+    </script>
+</body>
+</html>
